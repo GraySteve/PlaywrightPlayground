@@ -1,2 +1,2 @@
 # PlaywrightPlayground
-Demonstrating the functionality of Playwright and POM used in testing.
+Demonstrating the functionalities of Playwright and POM used in testing.
