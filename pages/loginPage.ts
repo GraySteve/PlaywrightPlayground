@@ -1,8 +1,8 @@
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { BasePage } from './basePage';
 import { Header } from './components/header';
 
-export class HomePage extends BasePage {
+export class LoginPage extends BasePage {
   readonly header: Header;
 
   constructor(page: Page) {
@@ -10,7 +10,7 @@ export class HomePage extends BasePage {
     this.header = new Header(page);
   }
 
-  get heroTitle() {
+  private get _heroTitle(): Locator {
     return this.page.getByRole('heading', { level: 1 });
   }
 
