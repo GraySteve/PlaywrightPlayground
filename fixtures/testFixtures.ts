@@ -1,14 +1,29 @@
 import { test as base } from '@playwright/test';
-import { HomePage } from '../pages/homePage';
+import { LoginPage } from '../pages/loginPage';
+import { CatalogPage } from '../pages/catalogPage';
 
 type TestFixtures = {
-  homePage: HomePage;
+  loginPage: LoginPage;
+  catalogPage: CatalogPage;
+  autoCloseContext: void;
 };
 
 export const test = base.extend<TestFixtures>({
-  homePage: async ({ page }, use) => {
-    await use(new HomePage(page));
+  loginPage: async ({ page }, use) => {
+    await use(new LoginPage(page));
   },
+  catalogPage: async ({ page }, use) => {
+    await use(new CatalogPage(page));
+  },
+  autoCloseContext: [
+    async ({ page }, use) => {
+      await use();
+      if (!page.isClosed()) {
+        await page.context().close();
+      }
+    },
+    { auto: true },
+  ],
 });
 
 export { expect } from '@playwright/test';
