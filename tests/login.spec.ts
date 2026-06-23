@@ -1,4 +1,4 @@
-import { testUsers } from '../data/testData';
+import { UserBuilder } from '../data/builders/userBuilders';
 import { test, expect } from '../fixtures/testFixtures';
 
 test.describe('Login', () => {
@@ -8,8 +8,12 @@ test.describe('Login', () => {
   });
 
   test('shows error for wrong credentials', async ({ loginPage }) => {
+    const errorUser = new UserBuilder()
+    .withUserName('wrong_user')
+    .withPassword('wrong_password')
+    .build();
     await loginPage.open();
-    await loginPage.login({ userName: 'wrong', password: 'wrong' });
+    await loginPage.attemptLogin(errorUser);
 
     expect(await loginPage.isErrorIconVisibleForInput('username')).toBe(true);
     expect(await loginPage.isErrorIconVisibleForInput('password')).toBe(true);
@@ -18,12 +22,8 @@ test.describe('Login', () => {
     );
   });
 
-  test('logs in successfully with standard user', async ({ loginPage, page }) => {
-    await loginPage.open();
-    await loginPage.login({
-      userName: testUsers.standard.userName,
-      password: testUsers.standard.password,
-    });
+  test('logs in successfully with standard user', async ({ authenticatedUser }) => {
+    const { catalogPage, page } = authenticatedUser;
 
     await expect(page).toHaveURL(/.*inventory.html/);
   });

@@ -1,14 +1,19 @@
 import { Locator, Page } from "@playwright/test";
 import { BasePage } from "./basePage";
 import { Header } from "./components/header";
+import { WaitUtils } from "../utils/waitUtils";
 
 export class ProductDescriptionPage extends BasePage {
     readonly header: Header;
+    
     constructor(page: Page) {
         super(page);
         this.header = new Header(page);
     }
-    
+
+    private get _productImage(): Locator {
+        return this.page.locator('.inventory_details_img');
+    }
     private get _productTitle(): Locator {
         return this.page.locator('.inventory_details_name');
     }
@@ -43,15 +48,23 @@ export class ProductDescriptionPage extends BasePage {
 
     async addToCart(): Promise<void> {
         await this._addToCartButton.click();
-        await this._removeFromCartButton.waitFor({ state: 'visible' });
+        await WaitUtils.waitForElementState(this._removeFromCartButton, 'visible', { message: 'Remove from Cart button' });
     }
 
     async removeFromCart(): Promise<void> {
         await this._removeFromCartButton.click();
-        await this._addToCartButton.waitFor({ state: 'visible' });
+        await WaitUtils.waitForElement(this._addToCartButton, { message: 'Add to Cart button' });
     }
 
     async backToProductsPage(): Promise<void> {
         await this.header.goBackToProductsPage();
+    }
+
+    async waitForPageToLoad(): Promise<void> {
+        await WaitUtils.waitForCondition(async () => await this.isProductTitleVisible(), { message: 'Product Description Page to load' });
+        await WaitUtils.waitForCondition(async () => await this.isProductImageVisible(), { message: 'Product Description to be visible' });
+    }
+    async isProductImageVisible(): Promise<boolean> {
+        return await this._productImage.isVisible();
     }
 }

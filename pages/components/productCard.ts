@@ -1,6 +1,9 @@
 import { Page, Locator } from "@playwright/test";
 import { BaseComponent } from "./baseComponent";
 import { Header } from "./header";
+import { logger } from "../../utils/logger";
+import { WaitUtils } from "../../utils/waitUtils";
+import { ProductDescriptionPage } from "../../pages/productDescriptionPage";
 
 export class ProductCard extends BaseComponent {
     constructor(page: Page, rootLocator: Locator) {
@@ -43,12 +46,20 @@ export class ProductCard extends BaseComponent {
         return await this._productImage.isVisible();
     }
     async addToCart(): Promise<void> {
+        logger.info('Adding product to cart', { product: await this.getProductName() });
         await this._addToCartButton.click();
-        await this._removeFromCartButton.waitFor({ state: 'visible' });
+        await WaitUtils.waitForElementState(this._removeFromCartButton, 'visible', { message: 'Remove from Cart button' });
         await new Header(this.page).waitForCartbadgeToAppear();
     }
     async removeFromCart(): Promise<void> {
+        logger.info('Removing product from cart', { product: await this.getProductName() });
         await this._removeFromCartButton.click();
-        await this._addToCartButton.waitFor({ state: 'visible' });
+        await WaitUtils.waitForElementState(this._addToCartButton, 'visible', { message: 'Add to Cart button' });
+    }
+    async navigateToProductDetails(): Promise<ProductDescriptionPage> {
+        await this._productName.click();
+        const productDetailsPage = new ProductDescriptionPage(this.page);
+        await productDetailsPage.waitForPageToLoad();
+        return productDetailsPage;
     }
 }

@@ -1,5 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 import { BaseComponent } from './baseComponent';
+import { WaitUtils } from '../../utils/waitUtils';
 
 export class Header extends BaseComponent {
   constructor(page: Page) {
@@ -26,7 +27,7 @@ export class Header extends BaseComponent {
     return this.root.getByRole('heading', { name: /title/i });
   }
   async waitForCartbadgeToAppear(): Promise<void> {
-    await this._cartBadge.waitFor({ state: 'visible' });
+    await WaitUtils.waitForElementState(this._cartBadge, 'visible', { message: 'Cart Badge' });
   }
   async isCartBadgeVisible(): Promise<boolean> {
     return await this._cartBadge.isVisible();

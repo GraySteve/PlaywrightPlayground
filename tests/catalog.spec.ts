@@ -1,16 +1,10 @@
 import { test, expect } from '../fixtures/testFixtures';
-import { testUsers } from '../data/testData';
+import { WaitUtils } from '../utils/waitUtils';
 
 test.describe('Catalog', () => {
-  test.beforeEach(async ({ page, loginPage, catalogPage }) => {
-    await loginPage.open();
-    await loginPage.login({
-      userName: testUsers.standard.userName,
-      password: testUsers.standard.password,
-    });
-
-    await expect(page).toHaveURL(/.*inventory.html/);
-    await catalogPage.waitForPageToLoad();
+  test.beforeEach(async ({authenticatedUser}) => {
+    const { catalogPage } = authenticatedUser;
+    WaitUtils.waitForCondition(async () => await catalogPage.getProductCount() > 0, { message: 'Catalog page has products' });
   });
 
   test('should display catalog page', async ({ catalogPage }) => {

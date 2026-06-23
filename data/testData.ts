@@ -25,3 +25,5 @@ export const testUsers = {
     password: 'secret_sauce',
   },
 };
+
+//TODO: use user builders instead of hardcoded test data. This will allow for more flexible and maintainable test data management.
